@@ -69,28 +69,70 @@ export class AppComponent implements OnInit {
   salvar(): void {
     if (this.formulario.invalid) { this.formulario.markAllAsTouched(); this.exibir('Preencha todos os campos obrigatórios antes de salvar.', 'erro'); return; }
     const dados = this.formulario.getRawValue();
-    if (this.editandoId === null) { this.service.criar(dados); this.exibir('Objeto cadastrado com sucesso.'); }
-    else { this.service.atualizar({ ...dados, id: this.editandoId }); this.exibir('Registro atualizado com sucesso.'); }
-    this.carregar(); this.cancelarFormulario();
+    if (this.editandoId === null) {
+      this.service.create(dados).subscribe({
+        next: () => {
+          this.carregar();
+          this.exibir('Objeto cadastrado com sucesso.');
+          this.cancelarFormulario();
+        },
+        error: () => this.exibir('Não foi possível cadastrar o objeto.', 'erro')
+      });
+    } else {
+      this.service.update({ ...dados, id: this.editandoId }).subscribe({
+        next: () => {
+          this.carregar();
+          this.exibir('Registro atualizado com sucesso.');
+          this.cancelarFormulario();
+        },
+        error: () => this.exibir('Não foi possível atualizar o registro.', 'erro')
+      });
+    }
   }
 
   confirmarExclusao(objeto: ObjetoPerdido): void {
-    if (window.confirm(`Excluir o registro “${objeto.descricao}”? Esta ação não pode ser desfeita.`)) { this.service.remover(objeto.id); this.carregar(); this.exibir('Registro excluído com sucesso.'); if (this.selecionado?.id === objeto.id) this.fecharDetalhes(); }
+    if (window.confirm(`Excluir o registro “${objeto.descricao}”? Esta ação não pode ser desfeita.`)) {
+      this.service.delete(objeto.id).subscribe({
+        next: () => {
+          this.carregar();
+          this.exibir('Registro excluído com sucesso.');
+          if (this.selecionado?.id === objeto.id) this.fecharDetalhes();
+        },
+        error: () => this.exibir('Não foi possível excluir o registro.', 'erro')
+      });
+    }
   }
 
   alternarDevolucao(objeto: ObjetoPerdido): void {
-    this.service.alternarDevolucao(objeto.id); this.carregar();
-    this.exibir(objeto.devolvido ? 'Objeto marcado como aguardando retirada.' : 'Objeto marcado como devolvido.');
+    this.service.alternarDevolucao(objeto.id).subscribe({
+      next: () => {
+        this.carregar();
+        if (this.selecionado?.id === objeto.id) {
+          this.service.getById(objeto.id).subscribe(atualizado => {
+            this.selecionado = atualizado ?? null;
+          });
+        }
+        this.exibir(objeto.devolvido ? 'Objeto marcado como aguardando retirada.' : 'Objeto marcado como devolvido.');
+      },
+      error: () => this.exibir('Não foi possível alterar o status de devolução.', 'erro')
+    });
   }
 
-  verDetalhes(objeto: ObjetoPerdido): void { this.selecionado = objeto; this.mostrarDetalhes = true; }
+  verDetalhes(objeto: ObjetoPerdido): void {
+    this.service.getById(objeto.id).subscribe(detalhe => {
+      this.selecionado = detalhe ?? null;
+      this.mostrarDetalhes = this.selecionado !== null;
+    });
+  }
   fecharDetalhes(): void { this.mostrarDetalhes = false; this.selecionado = null; }
   cancelarFormulario(): void { this.mostrarFormulario = false; this.editandoId = null; this.formulario.reset(); }
   selecionarFiltro(filtro: Filtro): void { this.filtro = filtro; }
   campoInvalido(nome: string): boolean { const campo = this.formulario.get(nome); return !!campo && campo.invalid && (campo.touched || campo.dirty); }
   formatarData(data: string): string { if (!data) return '—'; const [ano, mes, dia] = data.split('-'); return `${dia}/${mes}/${ano}`; }
 
-  private carregar(): void { this.objetos = this.service.listar(); }
+  private carregar(): void {
+    this.service.getAll().subscribe(objetos => this.objetos = objetos);
+  }
   private dataHoje(): string { return new Date().toISOString().slice(0, 10); }
   private exibir(mensagem: string, tipo: 'sucesso' | 'erro' = 'sucesso'): void { this.mensagem = mensagem; this.tipoMensagem = tipo; window.setTimeout(() => this.mensagem = '', 3500); }
 }
