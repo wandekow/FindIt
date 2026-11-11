@@ -1,20 +1,61 @@
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
+import { ObjetoPerdido } from '../model/objeto-perdido.model';
 import { ObjetoPerdidoService } from './objeto-perdido.service';
 
 describe('ObjetoPerdidoService', () => {
   let service: ObjetoPerdidoService;
-  beforeEach(() => { localStorage.clear(); TestBed.configureTestingModule({}); service = TestBed.inject(ObjetoPerdidoService); });
-  it('gera IDs automaticamente e persiste um objeto', () => {
-    const criado = service.criar({ descricao: 'Chave azul', categoria: 'Chaves', localEncontrado: 'Pátio', dataEncontrado: '2026-11-06', responsavel: 'Equipe FindIt', contato: 'contato@exemplo.test', devolvido: false });
-    expect(criado.id).toBe(1); expect(service.listar().length).toBe(1); expect(service.listar()[0].descricao).toBe('Chave azul');
+
+  const novoObjeto: Omit<ObjetoPerdido, 'id'> = {
+    descricao: 'Chave azul',
+    categoria: 'Chaves',
+    localEncontrado: 'Pátio',
+    dataEncontrado: '2026-11-06',
+    responsavel: 'Equipe FindIt',
+    contato: 'contato@exemplo.test',
+    devolvido: false
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ObjetoPerdidoService);
   });
-  it('alterna a situação de devolução', () => {
-    const criado = service.criar({ descricao: 'Livro', categoria: 'Material escolar', localEncontrado: 'Sala 1', dataEncontrado: '2026-11-06', responsavel: 'Equipe FindIt', contato: '0000-0000', devolvido: false });
-    service.alternarDevolucao(criado.id); expect(service.listar()[0].devolvido).toBeTrue();
+
+  it('creates records and returns them through getAll and getById', async () => {
+    const criado = await firstValueFrom(service.create(novoObjeto));
+
+    expect(criado.id).toBe(1);
+    expect(await firstValueFrom(service.getAll())).toEqual([criado]);
+    expect(await firstValueFrom(service.getById(criado.id))).toEqual(criado);
+    expect(await firstValueFrom(service.getById(999))).toBeUndefined();
   });
-  it('atualiza e remove registros', () => {
-    const criado = service.criar({ descricao: 'Mochila', categoria: 'Acessórios', localEncontrado: 'Entrada', dataEncontrado: '2026-11-06', responsavel: 'Equipe FindIt', contato: '0000-0000', devolvido: false });
-    service.atualizar({ ...criado, descricao: 'Mochila preta' }); expect(service.listar()[0].descricao).toBe('Mochila preta');
-    service.remover(criado.id); expect(service.listar()).toEqual([]);
+
+  it('updates an existing record', async () => {
+    const criado = await firstValueFrom(service.create(novoObjeto));
+    const atualizado = { ...criado, descricao: 'Chave azul com chaveiro' };
+
+    await firstValueFrom(service.update(atualizado));
+
+    expect(await firstValueFrom(service.getById(criado.id))).toEqual(atualizado);
+    expect((await firstValueFrom(service.getAll()))[0].descricao).toBe('Chave azul com chaveiro');
+  });
+
+  it('deletes a record', async () => {
+    const criado = await firstValueFrom(service.create(novoObjeto));
+
+    await firstValueFrom(service.delete(criado.id));
+
+    expect(await firstValueFrom(service.getAll())).toEqual([]);
+    expect(await firstValueFrom(service.getById(criado.id))).toBeUndefined();
+  });
+
+  it('preserves the next ID after deleting the highest record', async () => {
+    const criado = await firstValueFrom(service.create(novoObjeto));
+    await firstValueFrom(service.delete(criado.id));
+
+    const seguinte = await firstValueFrom(service.create({ ...novoObjeto, descricao: 'Outro objeto' }));
+
+    expect(seguinte.id).toBe(2);
   });
 });

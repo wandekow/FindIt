@@ -1,0 +1,29 @@
+<header class="topbar"><div class="container topbar-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">⌖</span><div><strong>Find<span>It</span></strong><small>Achados e perdidos</small></div></div><a class="button button-light" routerLink="/manutencao">＋ Cadastrar objeto</a></div></header>
+
+<main class="container page-content">
+  <section class="intro"><div><p class="eyebrow">CONTROLE SIMPLES E SEGURO</p><h1>Encontre o que foi <em>encontrado.</em></h1><p class="subtitle">Registre, acompanhe e devolva objetos encontrados com organização.</p></div><div class="intro-badge"><span>⌁</span><div><b>Seus dados ficam no dispositivo</b><small>Persistência local ativada</small></div></div></section>
+
+  @if (successMessage()) { <div class="toast" role="status"><span>✓</span>{{ successMessage() }}</div> }
+  @if (errorMessage()) { <div class="toast toast-error" role="alert"><span>!</span>{{ errorMessage() }}</div> }
+
+  <section class="stats" aria-label="Resumo dos registros"><article class="stat-card"><div class="stat-icon teal">▦</div><div><small>Total registrados</small><strong>{{ total }}</strong><span>objetos no sistema</span></div></article><article class="stat-card"><div class="stat-icon amber">◷</div><div><small>Aguardando retirada</small><strong>{{ pendentes }}</strong><span>precisam de devolução</span></div></article><article class="stat-card"><div class="stat-icon green">✓</div><div><small>Já devolvidos</small><strong>{{ devolvidos }}</strong><span>finalizados</span></div></article></section>
+
+  <section class="workspace">
+    <div class="section-heading"><div><p class="eyebrow">REGISTROS</p><h2>Objetos encontrados</h2></div><span class="count-label">{{ filtrados().length }} {{ filtrados().length === 1 ? 'resultado' : 'resultados' }}</span></div>
+    <div class="toolbar"><label class="search-box"><span aria-hidden="true">⌕</span><input [ngModel]="busca()" (ngModelChange)="busca.set($event)" placeholder="Buscar por descrição, local, categoria..." aria-label="Buscar registros"></label><div class="filters" role="group" aria-label="Filtrar situação"><button [class.active]="filtro() === 'todos'" (click)="filtro.set('todos')">Todos <b>{{ total }}</b></button><button [class.active]="filtro() === 'pendentes'" (click)="filtro.set('pendentes')">Pendentes <b>{{ pendentes }}</b></button><button [class.active]="filtro() === 'devolvidos'" (click)="filtro.set('devolvidos')">Devolvidos <b>{{ devolvidos }}</b></button></div></div>
+
+    @if (loadingData()) {
+      <div class="empty" role="status"><h3>Carregando registros...</h3></div>
+    } @else if (filtrados().length) {
+      <div class="records-grid"><article class="record-card" *ngFor="let objeto of filtrados()"><div class="record-top"><span class="category">{{ objeto.categoria }}</span><span class="status" [class.status-done]="objeto.devolvido"><span>{{ objeto.devolvido ? '✓' : '◷' }}</span>{{ objeto.devolvido ? 'Devolvido' : 'Aguardando retirada' }}</span></div><h3>{{ objeto.descricao }}</h3><div class="record-meta"><span>⌖ {{ objeto.localEncontrado }}</span><span>▣ {{ formatarData(objeto.dataEncontrado) }}</span><span>♙ {{ objeto.responsavel }}</span></div><div class="record-actions"><button class="link-button" (click)="verDetalhes(objeto)">Ver detalhes</button><button class="icon-button" (click)="editar(objeto)" title="Editar registro" aria-label="Editar">✎</button><button class="icon-button danger" (click)="excluir(objeto)" title="Excluir registro" aria-label="Excluir">⌫</button><button class="toggle-button" [class.toggle-done]="objeto.devolvido" (click)="alternarDevolucao(objeto)">{{ objeto.devolvido ? 'Marcar pendente' : 'Marcar devolvido' }}</button></div></article></div>
+    } @else {
+      <div class="empty"><div class="empty-icon">⌖</div><h3>{{ busca() || filtro() !== 'todos' ? 'Nenhum registro encontrado' : 'Ainda não há objetos cadastrados' }}</h3><p>{{ busca() || filtro() !== 'todos' ? 'Tente ajustar a busca ou o filtro selecionado.' : 'Comece cadastrando um objeto encontrado.' }}</p>@if (!busca() && filtro() === 'todos') { <a class="button button-primary" routerLink="/manutencao">＋ Cadastrar primeiro objeto</a> }</div>
+    }
+  </section>
+</main>
+
+@if (selecionado(); as objeto) {
+  <div class="modal-backdrop" (click)="fecharDetalhes()"><section class="modal detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title" (click)="$event.stopPropagation()"><div class="modal-header"><div><p class="eyebrow">REGISTRO #{{ objeto.id }}</p><h2 id="detail-title">Detalhes do objeto</h2></div><button class="close-button" (click)="fecharDetalhes()" aria-label="Fechar">×</button></div><div class="detail-hero"><span class="category">{{ objeto.categoria }}</span><span class="status" [class.status-done]="objeto.devolvido"><span>{{ objeto.devolvido ? '✓' : '◷' }}</span>{{ objeto.devolvido ? 'Devolvido' : 'Aguardando retirada' }}</span><h3>{{ objeto.descricao }}</h3></div><dl class="detail-list"><div><dt>Local encontrado</dt><dd>{{ objeto.localEncontrado }}</dd></div><div><dt>Data encontrada</dt><dd>{{ formatarData(objeto.dataEncontrado) }}</dd></div><div><dt>Responsável</dt><dd>{{ objeto.responsavel }}</dd></div><div><dt>Contato</dt><dd>{{ objeto.contato }}</dd></div></dl><div class="form-footer"><button class="button button-ghost" (click)="fecharDetalhes()">Fechar</button><button class="button button-primary" (click)="fecharDetalhes(); editar(objeto)">Editar registro</button></div></section></div>
+}
+
+<footer class="footer container">FindIt · Programação para WEB II · Wanderley da Silva <span>Armazenamento local no navegador</span></footer>

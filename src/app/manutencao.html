@@ -1,0 +1,25 @@
+<header class="topbar"><div class="container topbar-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">⌖</span><div><strong>Find<span>It</span></strong><small>Achados e perdidos</small></div></div><a class="button button-light" routerLink="/admin">Voltar à administração</a></div></header>
+
+<main class="container page-content">
+  <section class="workspace form-page">
+    <div class="modal-header"><div><p class="eyebrow">{{ editandoId() === null ? 'NOVO REGISTRO' : 'ALTERAR REGISTRO' }}</p><h2>{{ editandoId() === null ? 'Cadastrar objeto' : 'Editar objeto' }}</h2></div></div>
+
+    @if (successMessage()) { <div class="toast" role="status">{{ successMessage() }}</div> }
+    @if (errorMessage()) { <div class="toast toast-error" role="alert">{{ errorMessage() }}</div> }
+
+    <form [formGroup]="formulario" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <label class="field field-wide">Descrição do objeto *<input id="descricao" formControlName="descricao" placeholder="Ex.: Mochila preta com caderno">@if (campoInvalido('descricao')) { <small>Informe uma descrição com pelo menos 3 caracteres.</small> }</label>
+        <label class="field">Categoria *<select formControlName="categoria"><option value="">Selecione uma categoria</option><option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option></select>@if (campoInvalido('categoria')) { <small>Selecione uma categoria.</small> }</label>
+        <label class="field">Local encontrado *<input formControlName="localEncontrado" placeholder="Ex.: Biblioteca central">@if (campoInvalido('localEncontrado')) { <small>Informe o local.</small> }</label>
+        <label class="field">Data encontrada *<input type="date" formControlName="dataEncontrado">@if (campoInvalido('dataEncontrado')) { <small>Informe a data.</small> }</label>
+        <label class="field">Responsável pelo registro *<input formControlName="responsavel" placeholder="Nome do responsável">@if (campoInvalido('responsavel')) { <small>Informe o responsável.</small> }</label>
+        <label class="field">Contato *<input formControlName="contato" placeholder="Telefone ou e-mail">@if (campoInvalido('contato')) { <small>Informe um contato.</small> }</label>
+      </div>
+      <label class="check-field"><input type="checkbox" formControlName="devolvido"><span><b>Objeto já foi devolvido</b><small>Marque caso o item tenha sido entregue ao proprietário.</small></span></label>
+      <div class="form-footer"><a class="button button-ghost" routerLink="/admin">Cancelar</a><button type="submit" class="button button-primary" [disabled]="saving() || loadingData()">{{ saving() ? 'Salvando...' : editandoId() !== null ? 'Atualizar' : 'Salvar' }}</button></div>
+    </form>
+  </section>
+</main>
+
+<footer class="footer container">FindIt · Programação para WEB II · Wanderley da Silva <span>Armazenamento local no navegador</span></footer>
