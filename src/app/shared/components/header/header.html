@@ -1,0 +1,15 @@
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" routerLink="/" aria-label="FindIt, página inicial">
+      <span class="brand-mark" aria-hidden="true">⌖</span>
+      <span class="brand-copy"><strong>Find<span>It</span></strong><small>Achados e perdidos</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Menu principal">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/objetos" routerLinkActive="active">Objetos</a>
+      <a routerLink="/sobre" routerLinkActive="active">Sobre</a>
+      <a routerLink="/admin" routerLinkActive="active">Administração</a>
+      <a class="button button-light" routerLink="/manutencao">＋ Cadastrar objeto</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,9 @@
+:host { display: block; }
+.form-page { border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-card); }
+.form-page form { padding: 22px 27px; }
+.form-page > .modal-header { padding-bottom: 20px; }
+.form-page .form-footer { margin-top: 23px; }
+@media (max-width: 760px) {
+  .form-page form { padding: 18px; }
+  .form-page > .modal-header { padding: 20px 18px 15px; }
+}

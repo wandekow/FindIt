@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ObjetoPerdido } from './model/objeto-perdido.model';
-import { ObjetoPerdidoService } from './services/objeto-perdido.service';
+import { ObjetoPerdido } from '../../model/objeto-perdido.model';
+import { ObjetoPerdidoService } from '../../services/objeto-perdido.service';
 
 @Component({
   selector: 'app-manutencao',

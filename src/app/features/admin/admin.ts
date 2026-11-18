@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ObjetoPerdido } from './model/objeto-perdido.model';
-import { ObjetoPerdidoService } from './services/objeto-perdido.service';
+import { ObjetoPerdido } from '../../model/objeto-perdido.model';
+import { ObjetoPerdidoService } from '../../services/objeto-perdido.service';
 
 type Filtro = 'todos' | 'pendentes' | 'devolvidos';
 

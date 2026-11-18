@@ -1,0 +1,27 @@
+:host { display: block; }
+.page-content { padding-top: 42px; padding-bottom: 52px; }
+.container { max-width: 900px; }
+.detail-card { overflow: hidden; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); box-shadow: 0 8px 24px #23463b08; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: var(--color-primary); font-size: 13px; font-weight: 700; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+.detail-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 30px; border-bottom: 1px solid #e7efed; background: linear-gradient(120deg, #f4fbf9, #fff); }
+.detail-heading h1 { margin: 13px 0 0; color: #193b37; font-size: clamp(25px, 4vw, 36px); letter-spacing: -1px; }
+.detail-heading .status { flex: 0 0 auto; margin-top: 27px; }
+.detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 0; padding: 28px 30px; }
+.detail-meta div { padding-bottom: 15px; border-bottom: 1px solid #e7efed; }
+.detail-meta dt { margin-bottom: 7px; color: #77918b; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.detail-meta dd { margin: 0; color: #294843; font-size: 15px; font-weight: 600; }
+.privacy-note { margin: 0 30px; padding: 14px; border-radius: var(--radius-control); background: #f6faf8; color: var(--color-muted); font-size: 12px; line-height: 1.5; }
+.detail-actions { display: flex; justify-content: flex-end; padding: 24px 30px 30px; }
+.not-found > .button { margin-top: 12px; }
+.not-found-code { color: #75aaa0; font-size: 48px; font-weight: 800; letter-spacing: -2px; }
+.state-card h1 { margin: 10px 0; color: #193b37; font-size: 25px; }
+.state-error h1 { color: #793b38; }
+@media (max-width: 620px) {
+  .detail-heading { flex-direction: column; padding: 22px; }
+  .detail-heading .status { margin-top: 0; }
+  .detail-meta { grid-template-columns: 1fr; gap: 12px; padding: 22px; }
+  .privacy-note { margin-inline: 22px; }
+  .detail-actions { justify-content: stretch; padding: 20px 22px 22px; }
+  .detail-actions .button { width: 100%; }
+}

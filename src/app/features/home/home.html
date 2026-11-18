@@ -1,0 +1,54 @@
+<div class="container page-content home-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">ACHADOS E PERDIDOS</p>
+      <h1>Um objeto encontrado pode <em>voltar para casa.</em></h1>
+      <p class="subtitle">Registre itens encontrados, acompanhe a situação e ajude cada pessoa a reencontrar o que perdeu.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" routerLink="/objetos">Ver objetos encontrados</a>
+        <a class="button button-secondary" routerLink="/manutencao">＋ Cadastrar objeto</a>
+      </div>
+    </div>
+    <aside class="local-note">
+      <span class="note-icon" aria-hidden="true">⌖</span>
+      <div><strong>Seus dados ficam no dispositivo</strong><small>O FindIt usa armazenamento local neste navegador.</small></div>
+    </aside>
+  </section>
+
+  <section class="stats" aria-label="Resumo dos registros">
+    <article class="stat-card"><span class="stat-icon teal" aria-hidden="true">▦</span><div><small>Total registrados</small><strong>{{ total() }}</strong><span>objetos no sistema</span></div></article>
+    <article class="stat-card"><span class="stat-icon amber" aria-hidden="true">◷</span><div><small>Aguardando retirada</small><strong>{{ pendentes() }}</strong><span>precisam de devolução</span></div></article>
+    <article class="stat-card"><span class="stat-icon green" aria-hidden="true">✓</span><div><small>Já devolvidos</small><strong>{{ devolvidos() }}</strong><span>registros finalizados</span></div></article>
+  </section>
+
+  <section class="recent-section" aria-labelledby="recent-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">ACOMPANHAMENTO</p><h2 id="recent-title">Objetos recentes</h2><p class="section-description">Acompanhe os últimos itens registrados.</p></div>
+      <a class="text-link" routerLink="/objetos">Ver todos os objetos <span aria-hidden="true">→</span></a>
+    </div>
+
+    @if (loading()) {
+      <div class="state-card" role="status"><span class="spinner" aria-hidden="true"></span><p>Carregando objetos...</p></div>
+    } @else if (errorMessage()) {
+      <div class="state-card state-error" role="alert"><p>{{ errorMessage() }}</p><button type="button" class="text-button" (click)="load()">Tentar novamente</button></div>
+    } @else if (recentes().length > 0) {
+      <div class="recent-grid">
+        @for (objeto of recentes(); track objeto.id) {
+          <a class="recent-card" [routerLink]="['/objetos', objeto.id]" [attr.aria-label]="'Ver detalhes de ' + objeto.descricao">
+            <div class="record-top"><span class="category">{{ objeto.categoria }}</span><span class="status" [class.status-done]="objeto.devolvido">{{ objeto.devolvido ? 'Devolvido' : 'Aguardando retirada' }}</span></div>
+            <h3>{{ objeto.descricao }}</h3>
+            <p class="record-meta">{{ objeto.localEncontrado }} <span aria-hidden="true">·</span> {{ formatarData(objeto.dataEncontrado) }}</p>
+            <span class="card-link">Ver detalhes <span aria-hidden="true">→</span></span>
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="empty-state"><span aria-hidden="true">⌖</span><h3>Ainda não há objetos cadastrados</h3><p>Quando um item for registrado, ele aparecerá aqui.</p><a class="text-link" routerLink="/manutencao">Cadastrar o primeiro objeto <span aria-hidden="true">→</span></a></div>
+    }
+  </section>
+
+  <section class="closing-callout">
+    <div><p class="eyebrow">VAMOS COMEÇAR?</p><h2>Consulte os registros ou cadastre um novo achado.</h2></div>
+    <a class="button button-light" routerLink="/admin">Ir para Administração <span aria-hidden="true">→</span></a>
+  </section>
+</div>

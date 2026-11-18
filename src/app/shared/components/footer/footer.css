@@ -1,0 +1,7 @@
+:host { display: block; background: #0b5f59; }
+.footer { display: flex; justify-content: space-between; gap: 12px; padding-block: 20px; color: #fff; font-size: 11px; }
+.footer span:last-child { color: #c5eee0; }
+@media (max-width: 760px) {
+  .footer { display: block; text-align: center; }
+  .footer span:last-child { display: block; margin-top: 6px; }
+}

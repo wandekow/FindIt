@@ -1,0 +1,26 @@
+<div class="container page-content">
+  <section class="page-heading">
+    <div><p class="eyebrow">ACHADOS E PERDIDOS</p><h1>Objetos encontrados</h1><p>Consulte os itens registrados e veja as informações de cada achado.</p></div>
+    <a class="button button-primary" routerLink="/">Voltar para Home</a>
+  </section>
+
+  @if (loading()) {
+    <div class="state-card" role="status"><span class="spinner" aria-hidden="true"></span><p>Carregando objetos...</p></div>
+  } @else if (errorMessage()) {
+    <div class="state-card state-error" role="alert"><p>{{ errorMessage() }}</p><button type="button" class="text-button" (click)="load()">Tentar novamente</button></div>
+  } @else if (objetos().length > 0) {
+    <p class="result-count">{{ objetos().length }} {{ objetos().length === 1 ? 'objeto encontrado' : 'objetos encontrados' }}</p>
+    <div class="objects-grid">
+      @for (objeto of objetos(); track objeto.id) {
+        <a class="object-card" [routerLink]="['/objetos', objeto.id]" [attr.aria-label]="'Ver detalhes de ' + objeto.descricao">
+          <div class="card-top"><span class="category">{{ objeto.categoria }}</span><span class="status" [class.status-done]="objeto.devolvido">{{ objeto.devolvido ? 'Devolvido' : 'Aguardando retirada' }}</span></div>
+          <h2>{{ objeto.descricao }}</h2>
+          <dl class="object-meta"><div><dt>Local encontrado</dt><dd>{{ objeto.localEncontrado }}</dd></div><div><dt>Data encontrada</dt><dd>{{ formatarData(objeto.dataEncontrado) }}</dd></div></dl>
+          <span class="card-link">Ver detalhes <span aria-hidden="true">→</span></span>
+        </a>
+      }
+    </div>
+  } @else {
+    <div class="empty-state"><span aria-hidden="true">⌖</span><h2>Nenhum objeto cadastrado</h2><p>Os objetos registrados aparecerão aqui.</p></div>
+  }
+</div>

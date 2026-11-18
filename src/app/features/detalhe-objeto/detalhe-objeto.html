@@ -1,0 +1,20 @@
+<div class="container page-content">
+  <a class="back-link" routerLink="/objetos"><span aria-hidden="true">←</span> Voltar para objetos</a>
+
+  @if (loading()) {
+    <div class="state-card" role="status"><span class="spinner" aria-hidden="true"></span><p>Carregando detalhes do objeto...</p></div>
+  } @else if (errorMessage()) {
+    <div class="state-card state-error" role="alert"><h1>Não foi possível abrir este objeto</h1><p>{{ errorMessage() }}</p><button class="button button-primary" type="button" (click)="tentarNovamente()">Tentar novamente</button><a class="button button-secondary" routerLink="/objetos">Voltar para a listagem</a></div>
+  } @else if (notFound()) {
+    <section class="state-card not-found"><span class="not-found-code">404</span><h1>Objeto não encontrado</h1><p>Este registro não existe ou não está mais disponível.</p><a class="button button-primary" routerLink="/objetos">Ver todos os objetos</a></section>
+  } @else {
+    @if (objeto(); as item) {
+      <article class="detail-card">
+        <header class="detail-heading"><div><p class="eyebrow">DETALHE DO ACHADO</p><span class="category">{{ item.categoria }}</span><h1>{{ item.descricao }}</h1></div><span class="status" [class.status-done]="item.devolvido">{{ item.devolvido ? 'Devolvido' : 'Aguardando retirada' }}</span></header>
+        <dl class="detail-meta"><div><dt>Local encontrado</dt><dd>{{ item.localEncontrado }}</dd></div><div><dt>Data encontrada</dt><dd>{{ formatarData(item.dataEncontrado) }}</dd></div></dl>
+        <p class="privacy-note">Para proteger a privacidade, os dados de contato e de quem registrou o achado não são exibidos nesta página.</p>
+        <div class="detail-actions"><a class="button button-primary" routerLink="/objetos">Voltar para a listagem</a></div>
+      </article>
+    }
+  }
+</div>
